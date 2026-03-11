@@ -67,8 +67,8 @@ def create_chatbot():
     # Create Gradio interface. Customize the interface however you'd like!
     demo = gr.ChatInterface(
         chat,
-        title="6.C395",
-        description="Ask me anything about [topic]! Since I am a free tier chatbot, I may give a 503 error when I'm busy. If that happens, please try again a few seconds later.",
+        title="Harbor",
+        description="Come in from the storm.",
         examples=[
             "What options are available for someone in my situation?"
         ]
