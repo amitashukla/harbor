@@ -1,8 +1,8 @@
 from huggingface_hub import InferenceClient
-from config import BASE_MODEL, MY_MODEL, HF_TOKEN
+from src.config import BASE_MODEL, MY_MODEL, HF_TOKEN
 import os
-from utils.tags import tag_user_input
-from utils.profile import load_schema, create_empty_profile, extract_profile_updates, merge_profile, profile_to_summary
+from src.utils.tags import tag_user_input
+from src.utils.profile import load_schema, create_empty_profile, extract_profile_updates, merge_profile, profile_to_summary
 
 class Chatbot:
     """
