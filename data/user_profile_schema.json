@@ -1,0 +1,191 @@
+{
+  "demographics": {
+    "population": {
+      "description": "User's age group or life stage",
+      "type": "single",
+      "options": [
+        {"value": "adolescent", "label": "Adolescent / Minor", "keywords": ["teen", "teenager", "adolescent", "minor", "kid", "child", "youth", "young", "high school", "middle school"], "cite": [7, 627]},
+        {"value": "young_adult", "label": "Young Adult / College Student", "keywords": ["college", "university", "student", "young adult", "campus", "dorm", "undergrad", "graduate student"], "cite": [120, 346]},
+        {"value": "adult", "label": "General Adult", "keywords": [], "cite": [212]},
+        {"value": "older_adult", "label": "Older Adult", "keywords": ["older", "elderly", "senior", "retired", "retirement", "aging"], "cite": [446, 967]}
+      ]
+    },
+    "identity_factors": {
+      "description": "Core identity factors relevant to treatment matching",
+      "type": "multi",
+      "options": [
+        {"value": "veteran", "label": "Veteran", "keywords": ["veteran", "military", "army", "navy", "marines", "air force", "service member", "deployed", "combat", "VA"], "cite": [65]},
+        {"value": "lgbtq", "label": "LGBTQ+", "keywords": ["lgbtq", "gay", "lesbian", "bisexual", "transgender", "trans", "queer", "nonbinary", "non-binary"], "cite": [258]},
+        {"value": "wheelchair_user", "label": "Wheelchair User", "keywords": ["wheelchair", "mobility aid", "mobility impairment"], "cite": [918]},
+        {"value": "woman", "label": "Woman", "keywords": ["woman", "female", "mother", "mom", "daughter", "wife", "girl"], "cite": []},
+        {"value": "homeless", "label": "Homeless / Unhoused", "keywords": ["homeless", "unhoused", "shelter", "no place to stay", "living on the street", "couch surfing"], "cite": [860]},
+        {"value": "autistic", "label": "Autistic / Neurodivergent", "keywords": ["autistic", "autism", "neurodivergent", "adhd", "on the spectrum"], "cite": []}
+      ]
+    },
+    "language": {
+      "description": "Preferred language for treatment",
+      "type": "single",
+      "options": [
+        {"value": "english", "label": "English", "keywords": ["english"], "cite": [173]},
+        {"value": "spanish", "label": "Spanish", "keywords": ["spanish", "español", "espanol", "habla español"], "cite": [171, 173]}
+      ]
+    },
+    "pronouns": {
+      "description": "User's pronouns",
+      "type": "single",
+      "options": [
+        {"value": "he", "label": "He/Him", "keywords": ["he/him"], "cite": []},
+        {"value": "she", "label": "She/Her", "keywords": ["she/her"], "cite": []},
+        {"value": "they", "label": "They/Them", "keywords": ["they/them"], "cite": [267]}
+      ]
+    }
+  },
+  "logistics": {
+    "zipcode": {
+      "description": "User's ZIP code for proximity-based facility matching",
+      "type": "extracted",
+      "pattern": "\\b\\d{5}\\b"
+    },
+    "region": {
+      "description": "Broader region or area description (city, county, state, or rural designation)",
+      "type": "extracted",
+      "examples": ["Boston", "Pocahontas County", "rural West Virginia"]
+    },
+    "profession": {
+      "description": "Long-term profession relevant to treatment (e.g., licensing fears, scheduling)",
+      "type": "single",
+      "options": [
+        {"value": "healthcare_worker", "label": "Healthcare Worker / Nurse", "keywords": ["nurse", "doctor", "healthcare worker", "hospital", "medical professional", "EMT", "paramedic", "physician"], "cite": [793]},
+        {"value": "mental_health_professional", "label": "Mental Health Professional / Therapist", "keywords": ["therapist", "counselor", "psychologist", "psychiatrist", "social worker", "mental health professional"], "cite": [1021]},
+        {"value": "first_responder", "label": "First Responder", "keywords": ["firefighter", "police", "officer", "first responder", "law enforcement"], "cite": []}
+      ]
+    },
+    "accessibility_needs": {
+      "description": "Physical accessibility requirements for facilities",
+      "type": "multi",
+      "options": [
+        {"value": "wheelchair_accessible", "label": "Wheelchair Accessible / ADA", "keywords": ["wheelchair accessible", "ada accessible", "accessibility", "ramp", "elevator"], "cite": [918]}
+      ]
+    },
+    "insurance": {
+      "description": "Payment or insurance method",
+      "type": "single",
+      "options": [
+        {"value": "private", "label": "Private Insurance", "keywords": ["insurance", "blue cross", "aetna", "cigna", "united health", "anthem", "humana", "private insurance", "employer insurance", "work insurance"], "cite": [26, 527, 607]},
+        {"value": "medicaid_medicare", "label": "Medicaid / Medicare", "keywords": ["medicaid", "medicare", "masshealth", "state insurance"], "cite": [171, 464, 527]},
+        {"value": "va_tricare", "label": "VA Benefits / TRICARE", "keywords": ["va benefits", "tricare", "veterans affairs", "va insurance", "military insurance"], "cite": [84, 89]},
+        {"value": "uninsured", "label": "Uninsured / Self-Pay", "keywords": ["uninsured", "no insurance", "self-pay", "self pay", "pay out of pocket", "can't afford", "sliding scale", "free"], "cite": [120, 527]}
+      ]
+    },
+    "treatment_history": {
+      "description": "Previous treatment experiences",
+      "type": "extracted",
+      "examples": ["prior 12-step residential", "been to rehab before", "tried outpatient"],
+      "cite": [752, 759, 762]
+    }
+  },
+  "status": {
+    "current_state": {
+      "description": "User's current sobriety or intoxication state",
+      "type": "single",
+      "options": [
+        {"value": "sober", "label": "Sober", "keywords": ["sober", "clean", "not using", "in recovery"], "cite": [459]},
+        {"value": "intoxicated", "label": "Currently Intoxicated / Incoherent", "keywords": ["drunk", "high", "intoxicated", "wasted", "messed up", "using right now"], "cite": [564, 567]}
+      ]
+    },
+    "crisis_level": {
+      "description": "Level of distress or crisis",
+      "type": "single",
+      "options": [
+        {"value": "general_distress", "label": "General Distress", "keywords": ["stressed", "overwhelmed", "struggling", "having a hard time", "not doing well"], "cite": [122]},
+        {"value": "acute_crisis", "label": "Acute Distress / Suicidal Ideation", "keywords": ["suicidal", "kill myself", "want to die", "end it", "overdose", "can't go on", "hurt myself", "self-harm", "no reason to live"], "cite": [212, 215]}
+      ]
+    },
+    "temporary_factors": {
+      "description": "Temporary life circumstances affecting treatment needs",
+      "type": "multi",
+      "options": [
+        {"value": "pregnant", "label": "Pregnant / Postpartum", "keywords": ["pregnant", "pregnancy", "postpartum", "expecting", "baby on the way", "just had a baby"], "cite": [300]},
+        {"value": "homeless", "label": "Homeless / Unhoused", "keywords": ["homeless", "unhoused", "shelter", "no place to stay", "living on the street"], "cite": [860]},
+        {"value": "court_mandated", "label": "Court-Mandated", "keywords": ["court", "mandated", "judge", "probation", "parole", "court-ordered", "legal requirement"], "cite": [828, 831]}
+      ]
+    }
+  },
+  "clinical": {
+    "primary_focus": {
+      "description": "Primary reason for seeking help",
+      "type": "single",
+      "options": [
+        {"value": "substance_use", "label": "Alcohol or Drug Use", "keywords": ["drinking", "drug", "substance", "addiction", "using", "habit", "dependence"], "cite": [518]},
+        {"value": "mental_health", "label": "Mental Health", "keywords": ["anxiety", "depression", "trauma", "ptsd", "bipolar", "panic", "mental health", "therapy", "counseling"], "cite": [518]},
+        {"value": "dual_diagnosis", "label": "Both (Co-occurring)", "keywords": ["both", "dual diagnosis", "co-occurring", "mental health and substance", "depression and drinking"], "cite": [518, 522]},
+        {"value": "unsure", "label": "Unsure", "keywords": ["not sure", "don't know", "unsure", "maybe", "i think"], "cite": [518]}
+      ]
+    },
+    "substances": {
+      "description": "Specific substances involved",
+      "type": "multi",
+      "options": [
+        {"value": "alcohol", "label": "Alcohol", "keywords": ["alcohol", "drinking", "beer", "wine", "liquor", "booze", "drunk"], "cite": [65]},
+        {"value": "opioids", "label": "Opioids", "keywords": ["opioid", "heroin", "fentanyl", "pills", "oxy", "oxycontin", "percocet", "vicodin", "painkiller", "opiate"], "cite": [171, 867]},
+        {"value": "stimulants", "label": "Meth / Stimulants", "keywords": ["meth", "methamphetamine", "cocaine", "crack", "stimulant", "adderall", "amphetamine", "speed", "coke"], "cite": [595, 867]},
+        {"value": "cannabis", "label": "Cannabis", "keywords": ["marijuana", "cannabis", "weed", "pot", "thc", "edibles", "smoking weed"], "cite": [7]},
+        {"value": "benzodiazepines", "label": "Benzodiazepines", "keywords": ["benzo", "benzodiazepine", "xanax", "valium", "klonopin", "ativan"], "cite": []},
+        {"value": "other", "label": "Other Substance", "keywords": [], "cite": []}
+      ]
+    }
+  },
+  "preferences": {
+    "setting": {
+      "description": "Preferred treatment setting",
+      "type": "single",
+      "options": [
+        {"value": "outpatient", "label": "Outpatient", "keywords": ["outpatient", "appointments", "weekly visits", "not live there"], "cite": [523]},
+        {"value": "intensive_outpatient", "label": "Intensive Outpatient (IOP)", "keywords": ["intensive outpatient", "iop", "partial hospitalization", "day program"], "cite": [523]},
+        {"value": "residential", "label": "Residential / Inpatient", "keywords": ["residential", "inpatient", "rehab", "live-in", "live there", "stay there", "30-day", "90-day"], "cite": [523]},
+        {"value": "telehealth", "label": "Telehealth", "keywords": ["telehealth", "online", "virtual", "video", "remote", "from home", "phone appointment"], "cite": [523]}
+      ]
+    },
+    "therapy_approach": {
+      "description": "Preferred therapeutic approach",
+      "type": "single",
+      "options": [
+        {"value": "mat", "label": "Medication-Assisted Treatment (MAT)", "keywords": ["mat", "medication-assisted", "suboxone", "methadone", "naltrexone", "vivitrol", "medication treatment", "medically assisted"], "cite": [171, 765]},
+        {"value": "cbt", "label": "Cognitive Behavioral Therapy (CBT)", "keywords": ["cbt", "cognitive behavioral", "talk therapy", "behavioral therapy"], "cite": [31, 146]},
+        {"value": "twelve_step", "label": "12-Step", "keywords": ["12-step", "twelve step", "aa", "na", "alcoholics anonymous", "narcotics anonymous", "sponsor", "higher power"], "cite": [759]},
+        {"value": "medication_only", "label": "Medication Only (No Counseling)", "keywords": ["medication only", "just medication", "no counseling", "no therapy", "just pills", "just meds"], "cite": [991, 993]}
+      ]
+    },
+    "scheduling": {
+      "description": "Scheduling constraints",
+      "type": "multi",
+      "options": [
+        {"value": "evening_weekend", "label": "Evening / Weekend Hours", "keywords": ["evening", "weekend", "after work", "night", "saturday", "sunday", "after hours"], "cite": [535]},
+        {"value": "after_school", "label": "After-School Scheduling", "keywords": ["after school", "after class", "afternoon"], "cite": [31, 35]}
+      ]
+    },
+    "barriers": {
+      "description": "Primary barriers to seeking treatment",
+      "type": "multi",
+      "options": [
+        {"value": "stigma", "label": "Stigma / Shame", "keywords": ["ashamed", "embarrassed", "stigma", "shame", "what people think", "judged", "judgment"], "cite": [7, 301]},
+        {"value": "fear_of_labeling", "label": "Fear of Labeling", "keywords": ["label", "labeled", "addict", "alcoholic", "don't want to be called"], "cite": [7]},
+        {"value": "denial", "label": "Denial / Uncertainty", "keywords": ["not sure if", "maybe i don't", "is it really", "not that bad", "i can stop"], "cite": [346]},
+        {"value": "cost", "label": "Cost", "keywords": ["cost", "expensive", "afford", "money", "price", "cheap", "budget"], "cite": [120]},
+        {"value": "legal_fear", "label": "Fear of Legal Consequences", "keywords": ["custody", "lose my kids", "license", "lose my job", "arrested", "legal", "fired"], "cite": [301, 796]},
+        {"value": "geographic_isolation", "label": "Geographic Isolation", "keywords": ["rural", "far away", "no providers", "nothing nearby", "middle of nowhere", "long drive"], "cite": [684, 686]},
+        {"value": "phone_anxiety", "label": "Phone Anxiety", "keywords": ["hate calling", "don't want to call", "phone anxiety", "can't call", "nervous to call", "scared to call"], "cite": [396, 419]}
+      ]
+    },
+    "contact_channel": {
+      "description": "Preferred way to be contacted or reach out",
+      "type": "single",
+      "options": [
+        {"value": "text", "label": "Text Message", "keywords": ["text", "text me", "sms", "message"], "cite": [164, 555]},
+        {"value": "phone", "label": "Phone Call", "keywords": ["call", "phone", "call me"], "cite": [488, 712]},
+        {"value": "email", "label": "Email", "keywords": ["email", "e-mail"], "cite": [295]},
+        {"value": "discreet", "label": "Discreet / Confidential Messaging", "keywords": ["discreet", "confidential", "private", "secret", "no one know"], "cite": [665, 821]}
+      ]
+    }
+  }
+}
