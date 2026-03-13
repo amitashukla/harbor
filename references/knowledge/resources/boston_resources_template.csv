@@ -1,0 +1,2 @@
+name,address,city,state,zip,phone,website,primary_focus,substances,age_groups,identity_factors,insurance,settings,therapy_approaches,languages,notes
+Example: Boston Recovery Center,123 Main St,Boston,MA,02101,617-555-0100,https://example.com,substance_use|mental_health,alcohol|opioids,adult|young_adult,veteran|lgbtq,medicaid_medicare|private|uninsured,outpatient|intensive_outpatient,cbt|mat|twelve_step,english|spanish,DELETE THIS ROW — it is just an example. Use pipe (|) to separate multiple values.
