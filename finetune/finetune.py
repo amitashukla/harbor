@@ -11,10 +11,10 @@ from datasets import load_dataset
 from src.config import BASE_MODEL, HF_TOKEN
 
 # --- Configuration ---
-OUTPUT_DIR = "./llama3-persona-lora"
+OUTPUT_DIR = "./harbor-lora"
 # Set this to your HF username/org to push the adapter after training.
-# Example: "your-username/harbor-llama3-lora"
-HF_REPO_ID = 'amitashukla/harbor-llama3-lora'
+# Example: "your-username/harbor-smollm3-lora"
+HF_REPO_ID = "amitashukla/harbor-smollm3-lora"
 
 # --- Load base model with 4-bit QLoRA ---
 model, tokenizer = FastLanguageModel.from_pretrained(
