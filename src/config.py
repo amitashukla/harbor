@@ -11,6 +11,6 @@ BASE_MODEL = "HuggingFaceTB/SmolLM3-3B"
 # MODEL = "deepseek-ai/DeepSeek-R1-Distill-Qwen-32B"
 
 # If you finetune the model or change it in any way, save it to huggingface hub, then set MY_MODEL to your model ID. The model ID is in the format "your-username/your-model-name".
-MY_MODEL = None
+MY_MODEL = "amitashukla/harbor-qwn25-lora"
 
 HF_TOKEN = os.getenv("HF_TOKEN")

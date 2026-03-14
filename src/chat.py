@@ -3,6 +3,7 @@ from src.config import BASE_MODEL, MY_MODEL, HF_TOKEN
 import os
 from src.utils.tags import tag_user_input
 from src.utils.profile import load_schema, create_empty_profile, extract_profile_updates, merge_profile, profile_to_summary
+from src.utils.resources import load_resources, filter_resources, score_resources, format_recommendations
 
 class Chatbot:
     """
@@ -27,6 +28,9 @@ class Chatbot:
         data_dir = os.path.join(current_dir, '..', 'data')
         self.profile_schema = load_schema(os.path.join(data_dir, 'user_profile_schema.json'))
         self.user_profile = create_empty_profile()
+        # Load treatment resources once
+        resources_path = os.path.join(data_dir, '..', 'references', 'knowledge', 'normalized_resources.csv')
+        self.resources = load_resources(resources_path)
 
     def update_profile(self, user_input):
         """
@@ -91,21 +95,32 @@ class Chatbot:
         
     def get_response(self, user_input):
         """
-        TODO: Implement this method to generate responses to user questions.
-        
-        This method should:
-        1. Use format_prompt() to prepare the input
-        2. Generate a response using the model
-        3. Clean up and return the response
+        Generate a response to the user's question, with resource recommendations
+        appended when the user profile contains enough information to match.
 
         Args:
             user_input (str): The user's question
 
         Returns:
-            str: The chatbot's response
-
-        Implementation tips:
-        - Use self.format_prompt() to format the user's input
-        - Use self.client to generate responses
+            str: The chatbot's response, optionally followed by top 3 resources
         """
-        pass
+        # 1. Format prompt (also updates profile and tags)
+        prompt = self.format_prompt(user_input)
+
+        # 2. Generate LLM response
+        response = self.client.text_generation(
+            prompt,
+            max_new_tokens=512,
+            temperature=0.7,
+        )
+        response = response.strip()
+
+        # 3. Filter resources by profile, score, and append top 3
+        filtered = filter_resources(self.resources, self.user_profile)
+        top_resources = score_resources(filtered, self.user_profile)
+        recommendations = format_recommendations(top_resources)
+
+        if recommendations:
+            response = response + "\n\n" + recommendations
+
+        return response
