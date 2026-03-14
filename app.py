@@ -13,10 +13,13 @@ Access in browser:
     http://localhost:7860
 """
 
+import os
 import re
 
 import gradio as gr
 from src.chat import Chatbot
+from src.utils.profile import create_empty_profile
+from src.utils.resources import load_resources, filter_resources, score_resources
 
 
 # ── CSS ───────────────────────────────────────────────────────────────────────
@@ -234,16 +237,29 @@ def is_valid_zip(zipcode: str) -> bool:
     return bool(ZIPCODE_RE.match(zipcode.strip()))
 
 
+def _load_resources_once():
+    """Load the normalized resources CSV once and cache."""
+    if not hasattr(_load_resources_once, "_cache"):
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+        path = os.path.join(current_dir, "references", "knowledge", "normalized_resources.csv")
+        _load_resources_once._cache = load_resources(path)
+    return _load_resources_once._cache
+
+
 def get_recommendations(zipcode: str) -> list[dict]:
     """
     Return a list of treatment recommendations for the given zip code.
 
-    TODO: Implement with real data source.
-
-    Each dict should have keys: name, address, phone, type.
-    Returns an empty list if no results found.
+    Uses the same filter/score logic as the chatbot, but with a minimal
+    profile containing only the zipcode.
     """
-    return []
+    profile = create_empty_profile()
+    profile["logistics"]["zipcode"] = zipcode.strip()
+
+    resources = _load_resources_once()
+    filtered = filter_resources(resources, profile)
+    top = score_resources(filtered, profile)
+    return top
 
 
 def format_recommendations(zipcode: str, results: list[dict]) -> str:
@@ -258,15 +274,35 @@ def format_recommendations(zipcode: str, results: list[dict]) -> str:
             f"</div>"
         )
 
-    items_html = "".join(
-        f"<div style='margin-bottom:0.75rem; padding:0.75rem; background:#f8fffd; "
-        f"border-radius:10px; border:1px solid #c8e6e6;'>"
-        f"<strong style='color:#0d6e6e;'>{r['name']}</strong><br>"
-        f"<span style='font-size:0.88rem; color:#5a7a7a;'>{r['type']} · {r['address']}</span><br>"
-        f"<a href='tel:{r['phone']}' style='font-size:0.88rem; color:#0d9e8f;'>{r['phone']}</a>"
-        f"</div>"
-        for r in results
-    )
+    items_html = ""
+    for r in results:
+        name = r.get("name", "Unknown Facility")
+        # Build address from parts
+        addr_parts = [r.get("address", ""), r.get("city", ""),
+                      r.get("state", ""), r.get("zip", "")]
+        address = ", ".join(p.strip() for p in addr_parts if p.strip())
+        phone = r.get("phone", "").strip()
+        # Type from primary_focus
+        focus = r.get("primary_focus", "").strip()
+        type_label = ", ".join(
+            v.strip().replace("_", " ").title() for v in focus.split("|")
+        ) if focus else ""
+
+        items_html += (
+            f"<div style='margin-bottom:0.75rem; padding:0.75rem; background:#f8fffd; "
+            f"border-radius:10px; border:1px solid #c8e6e6;'>"
+            f"<strong style='color:#0d6e6e;'>{name}</strong><br>"
+        )
+        if type_label or address:
+            items_html += (
+                f"<span style='font-size:0.88rem; color:#5a7a7a;'>"
+                f"{type_label + ' · ' if type_label else ''}{address}</span><br>"
+            )
+        if phone:
+            items_html += (
+                f"<a href='tel:{phone}' style='font-size:0.88rem; color:#0d9e8f;'>{phone}</a>"
+            )
+        items_html += "</div>"
     return (
         f"<div class='harbor-results'>"
         f"<div class='harbor-results-title'>📍 Options near {zipcode}</div>"
