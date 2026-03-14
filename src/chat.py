@@ -45,7 +45,7 @@ class Chatbot:
 
     def format_prompt(self, user_input):
         """
-        Format the user's input into a proper prompt with system context.
+        Format the user's input into a list of chat messages with system context.
         Also tags the input with relevant keywords and substances that appear in the text,
         and updates the user profile with any new information detected.
 
@@ -54,26 +54,26 @@ class Chatbot:
         2. Detects keywords from keywords.txt in user input (case-insensitive, partial matches)
         3. Detects substances from substances.txt in user input (case-insensitive, partial matches)
         4. Updates user profile from schema-based keyword matching
-        5. Injects profile summary into the prompt so the model knows what's been gathered
-        6. Returns formatted prompt: system_prompt + profile_summary + user_input + "Assistant:"
+        5. Injects profile summary into the system prompt so the model knows what's been gathered
+        6. Returns a list of message dicts for the chat completion API
 
         Args:
             user_input (str): The user's question
 
         Returns:
-            str: A formatted prompt ready for the model
+            list[dict]: A list of message dicts with 'role' and 'content' keys
         """
         # Get the directory where this file is located
         current_dir = os.path.dirname(os.path.abspath(__file__))
 
         # Load system prompt
-        system_prompt_path = os.path.join(current_dir, 'system_prompt.txt')
+        system_prompt_path = os.path.join(current_dir, '../data/system_prompt.md')
         with open(system_prompt_path, 'r', encoding='utf-8') as f:
             system_prompt = f.read().strip()
 
         # Tag user input with keywords and substances
-        keywords_path = os.path.join(current_dir, 'keywords.txt')
-        substances_path = os.path.join(current_dir, 'substances.txt')
+        keywords_path = os.path.join(current_dir, '../data/keywords.txt')
+        substances_path = os.path.join(current_dir, '../data/substances.txt')
 
         self.user_tags = tag_user_input(keywords_path, user_input)
         self.substance_tags = tag_user_input(substances_path, user_input)
@@ -84,14 +84,18 @@ class Chatbot:
         # Build profile summary for the prompt
         profile_summary = profile_to_summary(self.user_profile)
 
-        # Format the prompt: system_prompt + profile + user_input + "Assistant:"
-        parts = [system_prompt]
+        # Build system message with profile context
+        system_content = system_prompt
         if profile_summary:
-            parts.append(profile_summary)
-        parts.append(f"{user_input}\nAssistant:")
-        formatted_prompt = "\n\n".join(parts)
+            system_content = system_content + "\n\n" + profile_summary
 
-        return formatted_prompt
+        # Return structured messages for chat completion API
+        messages = [
+            {"role": "system", "content": system_content},
+            {"role": "user", "content": user_input},
+        ]
+
+        return messages
         
     def get_response(self, user_input):
         """
@@ -104,16 +108,16 @@ class Chatbot:
         Returns:
             str: The chatbot's response, optionally followed by top 3 resources
         """
-        # 1. Format prompt (also updates profile and tags)
-        prompt = self.format_prompt(user_input)
+        # 1. Format messages (also updates profile and tags)
+        messages = self.format_prompt(user_input)
 
-        # 2. Generate LLM response
-        response = self.client.text_generation(
-            prompt,
-            max_new_tokens=512,
+        # 2. Generate LLM response via chat completion API
+        result = self.client.chat_completion(
+            messages=messages,
+            max_tokens=512,
             temperature=0.7,
         )
-        response = response.strip()
+        response = result.choices[0].message.content.strip()
 
         # 3. Filter resources by profile, score, and append top 3
         filtered = filter_resources(self.resources, self.user_profile)
