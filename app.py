@@ -133,6 +133,13 @@ CSS = """
     font-size: 0.9rem;
     margin-top: 0.4rem;
 }
+#zip-results .pending,
+#zip-results .generating,
+#zip-results > .wrap,
+#zip-results > .svelte-spinner,
+#zip-results .eta-bar {
+    display: none !important;
+}
 
 /* ── Buttons ── */
 .harbor-start-btn button,
@@ -238,11 +245,14 @@ def is_valid_zip(zipcode: str) -> bool:
 
 
 def _load_resources_once():
-    """Load the normalized resources CSV once and cache."""
+    """Load resource CSVs once and cache."""
     if not hasattr(_load_resources_once, "_cache"):
         current_dir = os.path.dirname(os.path.abspath(__file__))
-        path = os.path.join(current_dir, "references", "knowledge", "normalized_resources.csv")
-        _load_resources_once._cache = load_resources(path)
+        paths = [
+            os.path.join(current_dir, "references", "knowledge", "ma_resources.csv"),
+            os.path.join(current_dir, "references", "knowledge", "resources", "boston_resources.csv"),
+        ]
+        _load_resources_once._cache = load_resources(paths)
     return _load_resources_once._cache
 
 
@@ -315,6 +325,7 @@ def format_recommendations(zipcode: str, results: list[dict]) -> str:
 
 def create_chatbot():
     """Creates the Harbor interface with a landing page and chatbot."""
+    _load_resources_once()          # pre-load CSVs so first zip lookup is fast
     chatbot = Chatbot()
 
     def chat(message, history):
@@ -339,6 +350,15 @@ def create_chatbot():
                 visible=True,
             )
         results = get_recommendations(zipcode)
+
+        # Log recommendations to console
+        if results:
+            print(f"[Harbor] Zip lookup ({zipcode}) — {len(results)} recommendation(s):")
+            for i, r in enumerate(results, 1):
+                print(f"  {i}. {r.get('name', 'Unknown')} — {r.get('city', '')}, {r.get('state', '')} {r.get('zip', '')}")
+        else:
+            print(f"[Harbor] Zip lookup ({zipcode}) — no results found.")
+
         return gr.update(value=format_recommendations(zipcode, results), visible=True)
 
     def show_chat():
@@ -375,7 +395,9 @@ def create_chatbot():
                             scale=1,
                             elem_classes="harbor-zip-btn",
                         )
-                    results_html = gr.HTML(visible=False)
+                # Results rendered outside the card so the loading spinner
+                # does not overlay the input card above.
+                results_html = gr.HTML(visible=False, elem_id="zip-results")
 
                 # Card 2 — Crisis callout (compact)
                 gr.HTML(CRISIS_CALLOUT_HTML)

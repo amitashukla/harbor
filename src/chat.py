@@ -6,13 +6,6 @@ from src.utils.profile import load_schema, create_empty_profile, extract_profile
 from src.utils.resources import load_resources, filter_resources, score_resources, format_recommendations
 
 class Chatbot:
-    """
-    This class is extra scaffolding around a model. Modify this class to specify how the model recieves prompts and generates responses.
-
-    Example usage:
-        chatbot = Chatbot()
-        response = chatbot.get_response("What options are available for me?")
-    """
 
     def __init__(self):
         """
@@ -29,8 +22,12 @@ class Chatbot:
         self.profile_schema = load_schema(os.path.join(data_dir, 'user_profile_schema.json'))
         self.user_profile = create_empty_profile()
         # Load treatment resources once
-        resources_path = os.path.join(data_dir, '..', 'references', 'knowledge', 'normalized_resources.csv')
-        self.resources = load_resources(resources_path)
+        knowledge_dir = os.path.join(data_dir, '..', 'references', 'knowledge')
+        resources_paths = [
+            os.path.join(knowledge_dir, 'ma_resources.csv'),
+            os.path.join(knowledge_dir, 'resources', 'boston_resources.csv'),
+        ]
+        self.resources = load_resources(resources_paths)
 
     def update_profile(self, user_input):
         """
@@ -123,6 +120,14 @@ class Chatbot:
         filtered = filter_resources(self.resources, self.user_profile)
         top_resources = score_resources(filtered, self.user_profile)
         recommendations = format_recommendations(top_resources)
+
+        # Log recommendations to console
+        if top_resources:
+            print(f"[Harbor] Chat recommendations ({len(top_resources)}) for profile:")
+            for i, r in enumerate(top_resources, 1):
+                print(f"  {i}. {r.get('name', 'Unknown')} — {r.get('city', '')}, {r.get('state', '')} {r.get('zip', '')}")
+        else:
+            print("[Harbor] No recommendations matched current profile.")
 
         if recommendations:
             response = response + "\n\n" + recommendations

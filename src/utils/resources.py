@@ -15,10 +15,18 @@ FIELD_MAP = [
 
 
 def load_resources(csv_path):
-    """Load normalized resources CSV into a list of dicts. Called once at init."""
-    with open(csv_path, "r", encoding="utf-8") as f:
-        reader = csv.DictReader(f)
-        return list(reader)
+    """Load one or more resource CSVs into a list of dicts.
+
+    Accepts a single path (str) or a list of paths. Called once at init.
+    """
+    if isinstance(csv_path, str):
+        csv_path = [csv_path]
+    rows = []
+    for path in csv_path:
+        with open(path, "r", encoding="utf-8") as f:
+            reader = csv.DictReader(f)
+            rows.extend(reader)
+    return rows
 
 
 def _get_profile_value(profile, category, field):
@@ -90,17 +98,25 @@ def filter_resources(resources, user_profile):
     result = _apply_filters(resources, filters)
     if len(result) >= 3:
         return result
+    best = result  # keep the best partial matches found so far
 
     # Relax geographic filter first
     relaxed = [f for f in filters if f[0] != "geo"]
-    result = _apply_filters(resources, relaxed)
-    if len(result) >= 3:
-        return result
+    if relaxed:
+        result = _apply_filters(resources, relaxed)
+        if len(result) >= 3:
+            return result
+        if len(result) > len(best):
+            best = result
 
     # Relax substances filter next
     relaxed = [f for f in relaxed if f[0] != "substances"]
-    result = _apply_filters(resources, relaxed)
-    return result
+    if relaxed:
+        result = _apply_filters(resources, relaxed)
+        if len(result) > len(best):
+            best = result
+
+    return best
 
 
 def _apply_filters(resources, filters):
